@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+:root {
+  --color-primary: #111111;
+  --wb-line: #e3e5df;
+  --wb-muted: #737373;
+  --color-primary-contrast: #ffffff;
+}
+
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-neutral-50 text-neutral-900 antialiased;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'Segoe UI', Roboto, sans-serif;
+  font-variant-numeric: tabular-nums;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* —— 全局组件规范（UI 评审 v1）—— */
+@layer components {
+  /* 卡片：白底 + 轻阴影，不用边框 */
+  .card {
+    @apply rounded-2xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.05)];
+  }
+  /* 输入框：h-11 / 16px 防 iOS 聚焦缩放 */
+  .input {
+    @apply h-11 w-full rounded-lg border border-neutral-200 bg-white px-3 text-base text-neutral-900 placeholder:text-neutral-400 focus:border-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 transition-colors;
+  }
+  /* 主按钮 */
+  .btn-primary {
+    @apply inline-flex h-11 items-center justify-center gap-1 rounded-lg bg-neutral-900 px-4 text-sm font-medium text-white transition active:scale-[0.98];
+  }
+  /* 次按钮 */
+  .btn-secondary {
+    @apply inline-flex h-11 items-center justify-center gap-1 rounded-lg border border-neutral-200 bg-white px-4 text-sm text-neutral-700 transition active:bg-neutral-50;
+  }
+  /* 小按钮（列表内） */
+  .btn-sm {
+    @apply inline-flex h-7 items-center justify-center gap-1 rounded-md px-2.5 text-xs transition active:scale-[0.96];
+  }
+  /* 标签 chip（展示型） */
+  .tag {
+    @apply rounded-md bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600;
+  }
+  /* 页面标题 */
+  .page-title {
+    @apply text-[22px] font-semibold tracking-tight text-neutral-900 md:text-2xl;
+  }
+  .page-sub {
+    @apply mt-1 text-[13px] text-neutral-500;
+  }
+  /* 列表容器（divide 式） */
+  /* 展示主卡：与首页同一语言（白底细边框、灰绿强调） */
+  .stat-card {
+    @apply rounded-2xl border bg-white p-4;
+    border-color: var(--wb-line);
+  }
+  .stat-label {
+    @apply text-xs;
+    color: var(--wb-muted);
+  }
+  .stat-value {
+    @apply text-3xl font-semibold leading-none tracking-tight tabular-nums;
+  }
+  .stat-track {
+    @apply h-1.5 overflow-hidden rounded-full;
+    background: #ecede8;
+  }
+  .list-card {
+    @apply card divide-y divide-neutral-100 overflow-hidden;
+  }
+  .list-row {
+    @apply flex items-center gap-3 px-4 py-3 transition-colors active:bg-neutral-50;
+  }
+  }

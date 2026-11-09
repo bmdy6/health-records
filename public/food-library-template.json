@@ -1,0 +1,12 @@
+{
+  "source": "请填写包装标注或可使用数据的来源；未填数值的模板不能导入",
+  "foods": [
+    {
+      "name": "请填写食品名称",
+      "kcal": null,
+      "protein": null,
+      "carbs": null,
+      "fat": null
+    }
+  ]
+}

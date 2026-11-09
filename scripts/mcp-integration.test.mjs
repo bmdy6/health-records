@@ -1,0 +1,38 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import { createLocalServer } from './local-server.mjs';
+
+test('real stdio MCP and persisted DAV share all four record families with exact replay and conflict protection',async t=>{
+ const dir=await mkdtemp(join(tmpdir(),'health-stdio-'));let server=await createLocalServer({dataDir:dir});
+ await new Promise(r=>server.listen(0,'127.0.0.1',r));
+ const base=`http://127.0.0.1:${server.address().port}`;
+ const config={HEALTH_WEBDAV_URL:base+'/dav/',HEALTH_WEBDAV_USER:'demo',HEALTH_WEBDAV_PASSWORD:'demo-only'};
+ const transport=new StdioClientTransport({command:process.execPath,args:['scripts/mcp-stdio.mjs'],cwd:fileURLToPath(new URL('..',import.meta.url)),env:config,stderr:'pipe'});
+ const client=new Client({name:'synthetic-acceptance',version:'1'});
+ t.after(async()=>{await client.close();await new Promise(r=>server.close(r));await rm(dir,{recursive:true,force:true});});
+ await client.connect(transport);assert.equal((await client.listTools()).tools.length,14);
+ const call=async(name,args)=>{const result=await client.callTool({name,arguments:args});assert.equal(result.isError,false,JSON.stringify(result));return result.structuredContent;};
+ const date='2026-11-01';
+ const meal={mutation_id:'meal-once',items:[{id:'meal-a',date,food:'虚构测试餐',grams:200,kcal:240,protein:6,carbs:40,fat:4,note:'synthetic; not nutritional guidance'}]};
+ const added=await call('food_add',meal);assert.deepEqual(await call('food_add',meal),added);
+ await call('workout_add',{mutation_id:'walk-once',items:[{id:'walk-a',date,title:'虚构散步',durationMin:20,feeling:'测试记录'}]});
+ const weight=await call('weight_add',{mutation_id:'weight-once',items:[{id:'weight-a',date,kg:70}]});
+ await call('health_goal_set',{mutation_id:'goal-once',expected:null,patch:{date,startKg:70,targetKg:68,carbsG:200,fatG:60}});
+ const context=await call('health_context',{start:date,end:date});assert.equal(context.foods.length,1);assert.equal(context.workouts.length,1);assert.equal(context.weights.length,1);assert.equal(context.goals.length,1);
+ const update={mutation_id:'half-once',id:'meal-a',expected:added.items[0],patch:{grams:100}};
+ const half=await call('food_update',update);assert.equal(half.item.kcal,120);assert.deepEqual(await call('food_update',update),half);
+ await call('weight_update',{mutation_id:'weight-edit',id:'weight-a',expected:weight.items[0],patch:{kg:71}});
+ const stale=await client.callTool({name:'weight_update',arguments:{mutation_id:'weight-stale',id:'weight-a',expected:weight.items[0],patch:{kg:72}}});assert.equal(stale.isError,true);assert.equal(stale.structuredContent.error.code,'conflict');
+ const auth='Basic '+Buffer.from('demo:demo-only').toString('base64');
+ const stored=await (await fetch(base+'/dav/personal/demo/body/food.json',{headers:{Authorization:auth}})).json();assert.equal(stored.length,1);assert.equal(stored[0].kcal,120);
+ await assert.rejects(createLocalServer({dataDir:dir}),/EEXIST/);
+ await client.close();await new Promise(r=>server.close(r));
+ server=await createLocalServer({dataDir:dir});await new Promise(r=>server.listen(0,'127.0.0.1',r));
+ const reopened=await (await fetch(`http://127.0.0.1:${server.address().port}/dav/personal/demo/body/food.json`,{headers:{Authorization:auth}})).json();assert.deepEqual(reopened,stored);
+});
