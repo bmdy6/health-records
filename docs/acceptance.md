@@ -26,7 +26,9 @@ A real stdio MCP client then read those same browser-written files: three meals,
 
 A separate acceptance run used the runtime proxy and the original vision parsing functions with the official OpenAI API and `gpt-4.1-mini`. Both inputs were invented: a typed 100 g apple request returned a structurally valid single result retaining 100 g; a narration containing one breakfast egg and 200 g lunch rice returned exactly two items with the stated meals and rice portion, tagged `source: "ai"`. Each request completed in about 1.7 seconds in this one run.
 
-This is a small compatibility smoke test, not a benchmark or evidence of nutritional accuracy. The browser photo happy path above used a mock provider and a generated test drawing. Real-food photo accuracy, broad provider compatibility and production reverse-proxy deployment remain unverified by this record.
+A third live request exercised the actual browser upload, image compression, runtime proxy and the same `gpt-4.1-mini` vision model with a generated blue-teapot image containing no food. The page displayed “没识别到食物，请重拍或手动输入” and still showed zero food records. The input is the public [image-mcp generated sample](https://github.com/bmdy6/image-mcp/blob/main/docs/readme/smoke-text.png), not a real-person photo.
+
+These are small compatibility smoke tests, not a benchmark or evidence of nutritional accuracy. The browser photo happy path above used a mock provider and a generated test drawing. Real-food photo accuracy, broad provider compatibility and production reverse-proxy deployment remain unverified by this record.
 
 ## First-use limits
 
