@@ -1,3 +1,5 @@
+[简体中文](README.md) | [English](README.en.md)
+
 # health-records
 
 个人健康记录网页 + MCP。饮食、实际训练、体重和目标保存在你自己的 WebDAV，网页与 Agent 读写同一份 JSON。
