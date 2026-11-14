@@ -2,9 +2,9 @@
 
 # health-records
 
-个人健康记录网页 + MCP。
+个人健康记录网页 + MCP。饮食、实际训练、体重和目标保存在你自己的 WebDAV，网页与 Agent 读写同一份 JSON。
 
-<img src="docs/images/desktop.png" width="340" alt="Health Records 桌面主界面：目标与当日营养">
+<img src="docs/images/desktop.png" width="640" alt="Health Records 桌面主界面：目标与当日营养">
 
 _截图使用虚构资料、合成记录和演示营养数值，不是个人健康数据或营养建议。_
 
@@ -25,8 +25,6 @@ npm start
 开发前端：另一个终端运行 `npm run dev`，访问 `http://127.0.0.1:5173`；本地存储/识别服务仍需 `npm start`。浏览器凭据存于该 origin 的 localStorage，请使用独立最小权限账号，不在不可信共用设备保存凭据。
 
 ## 正式存储：你自己的 WebDAV
-
-饮食、实际训练、体重和目标保存在你自己的 WebDAV，网页与 Agent 读写同一份 JSON。
 
 网页设置和 MCP 配置使用相同 URL、用户名与密码。外部服务使用 HTTPS，支持强 ETag、`If-Match`、`If-None-Match: *` 和读回；浏览器直连需正确配置 CORS 并暴露 `ETag`。不满足版本条件的服务会拒绝记录写入。
 

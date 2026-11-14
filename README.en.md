@@ -2,9 +2,9 @@
 
 # health-records
 
-A personal health records web app + MCP.
+A personal health records web app + MCP. Meals, actual workouts, weight, and goals live on your own WebDAV server; the browser and Agent read and write the same JSON files.
 
-<img src="docs/images/desktop.png" width="340" alt="Health Records desktop: goals and daily nutrition">
+<img src="docs/images/desktop.png" width="640" alt="Health Records desktop: goals and daily nutrition">
 
 _The screenshots use fictional profiles, synthetic records, and demonstration nutrition values. They are neither personal health data nor nutrition advice._
 
@@ -25,8 +25,6 @@ The first run contains no real records or default nutrition data. After setting 
 For frontend development, run `npm run dev` in another terminal and visit `http://127.0.0.1:5173`. The local storage/recognition service still requires `npm start`. Browser credentials are stored in localStorage for that origin. Use a separate account with minimal permissions, and do not save credentials on untrusted shared devices.
 
 ## Production storage: your own WebDAV
-
-Meals, actual workouts, weight, and goals live on your own WebDAV server; the browser and Agent read and write the same JSON files.
 
 Use the same URL, username, and password in the web settings and MCP configuration. External services must use HTTPS and support strong ETags, `If-Match`, `If-None-Match: *`, and read-back verification. Direct browser access requires correctly configured CORS with `ETag` exposed. Services that do not meet the version preconditions will have record writes rejected.
 
