@@ -2,13 +2,11 @@
 
 # health-records
 
-A personal health records web app + MCP. Meals, actual workouts, weight, and goals live on your own WebDAV server; the browser and Agent read and write the same JSON files.
+A personal health records web app + MCP.
 
-![Health Records desktop: goals and daily nutrition](docs/images/desktop.png)
+<img src="docs/images/desktop.png" width="340" alt="Health Records desktop: goals and daily nutrition">
 
 _The screenshots use fictional profiles, synthetic records, and demonstration nutrition values. They are neither personal health data nor nutrition advice._
-
-Record meals, edit portions, and log workouts and weight in the browser, or ask an MCP-compatible client to record them and review the results in the web app. Updates carry versions, saves are read back, and repeated requests do not create duplicates. Missing records are shown as missing information, rather than treated as evidence that nothing happened.
 
 ## Run locally
 
@@ -28,9 +26,11 @@ For frontend development, run `npm run dev` in another terminal and visit `http:
 
 ## Production storage: your own WebDAV
 
+Meals, actual workouts, weight, and goals live on your own WebDAV server; the browser and Agent read and write the same JSON files.
+
 Use the same URL, username, and password in the web settings and MCP configuration. External services must use HTTPS and support strong ETags, `If-Match`, `If-None-Match: *`, and read-back verification. Direct browser access requires correctly configured CORS with `ETag` exposed. Services that do not meet the version preconditions will have record writes rejected.
 
-Create `personal/<username>/body/` and `bills/` directories first. Usernames allow only ASCII letters, digits, underscores, and hyphens. The existing file contract is retained:
+Create `personal/<username>/body/` and `bills/` directories first. Usernames allow only ASCII letters, digits, underscores, and hyphens. The file paths are:
 
 - `personal/<username>/body/food.json`, `workouts.json`, `weights.json`, `health-goals.json`, `profile.json`
 - `bills/_settings.json` is the compatible storage-selection file. If absent, the personal directory above is used; an explicit `body: "shared"` selects `bills/body/`. The local development adapter provides only the personal directory.
@@ -38,6 +38,8 @@ Create `personal/<username>/body/` and `bills/` directories first. Usernames all
 MCP and the browser use conditional writes, complete original-snapshot checks, and read-back confirmation for food and health records. The profile page retains whole-file saves for the single-owner `profile.json`; concurrent edit merging is not yet provided. Restrict accessible directories on the server and back up your actual data. This project provides no hosted service.
 
 ## Review meals, workouts, and weight
+
+Record meals, edit portions, and log workouts and weight in the browser, or ask an MCP-compatible client to record them and review the results in the web app. Updates carry versions, saves are read back, and repeated requests do not create duplicates. Missing records are shown as missing information, rather than treated as evidence that nothing happened.
 
 Review recorded meals, enter actual workouts, and view weight trends on the same page.
 
@@ -55,7 +57,7 @@ Download a template from Settings or edit the [template file](public/food-librar
 
 ## Optional photo and narrated-text recognition
 
-Photo uploads and narrated-text input are retained. Recognition uses an OpenAI-compatible `/chat/completions` service. Keys are read only by the local service at runtime and never enter the frontend build. For example, set `HEALTH_AI_BASE_URL` to `https://api.openai.com/v1`, and configure models that support text/image input respectively:
+Photo uploads and narrated-text recognition are supported. Recognition uses an OpenAI-compatible `/chat/completions` service. Keys are read only by the local service at runtime and never enter the frontend build. For example, set `HEALTH_AI_BASE_URL` to `https://api.openai.com/v1`, and configure models that support text/image input respectively:
 
 ```bash
 # Inject these through your runtime or credential manager; never commit real values:
